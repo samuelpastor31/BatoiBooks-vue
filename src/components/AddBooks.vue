@@ -23,11 +23,6 @@ export default {
     }
   },
   methods: {
-    showMessage(isTrue, message) {
-      this.$nextTick(() => {
-        this.appMessages.renderMessage(isTrue, message)
-      })
-    },
     async handleSubmit() {
 
       // Crear el libro y agregarlo al store
@@ -36,6 +31,17 @@ export default {
         userId: 2,
       };
       await store.addBook(newBook);
+
+      // Limpiar el formulario
+      this.book = {
+        //id: null,
+        moduleCode: '',
+        publisher: '',
+        price: null,
+        pages: null,
+        status: '',
+        comments: '',
+      };
     },
   },
 };

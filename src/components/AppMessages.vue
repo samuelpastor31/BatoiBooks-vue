@@ -18,7 +18,7 @@ export default {
 <template>
     <div id="messages" v-for="(message, index) in messages" :key="message.id">
         <div v-html="message"></div>
-        <button type="button"
+        <button type="button" class="buttonX"
             style="float: right; background: none; border: none; font-weight: bold; font-size: 16px; cursor: pointer;"
             v-on:click=deleteMessage(index)>
             x

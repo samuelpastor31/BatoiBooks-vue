@@ -24,7 +24,7 @@ export default {
 </script>
 
 <template>
-    <div>
+    <div class="card">
     <h3 class="title">Libro: ({{book.id}})</h3>
     <span class="material-icons">face</span>
     <h4 class="publisher">Editorial {{book.publisher}}</h4>

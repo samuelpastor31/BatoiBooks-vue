@@ -48,7 +48,7 @@ export const store = {
       alert("Libro añadido con exito");
       const response = await apiClient.books().addBook(book);
       this.state.books.push(response.data);
-      this.addMessage(true, "Libro "+book.id+" creado con exito");
+      this.addMessage(true, "Libro creado con exito");
     } catch (error) {
       console.log("Error al cargar datos:", error);
       this.addMessage(false, "Error al crear el libro");
