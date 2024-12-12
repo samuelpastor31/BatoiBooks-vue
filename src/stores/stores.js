@@ -10,6 +10,7 @@ export const store = {
     modules: [],
     users: [],
     messages: [],
+    cart: [],
   }),
   async populateBooks() {
     try {
@@ -59,7 +60,7 @@ export const store = {
     try {
       const response = await apiClient.books().removeDBBook(id);
       this.state.books = this.state.books.filter((book) => book.id !== id);
-      this.addMessage(true, "Libro "+id+" eliminado con exito");
+      this.addMessage(true, "Libro " + id + " eliminado con exito");
     } catch (error) {
       console.log("Error al cargar datos:", error);
       this.addMessage(false, "Error al eliminar el libro");
@@ -81,5 +82,45 @@ export const store = {
 
   deleteMessage(index) {
     this.state.messages.splice(index, 1);
+  },
+
+  addBookToCart(book) {
+    if (this.state.cart.includes(book)) {
+      this.state.cart.splice(this.state.cart.indexOf(book), 1);
+      this.addMessage(false, "Libro " + book.id + " quitado del carrito");
+    } else {
+      this.state.cart.push(book);
+      this.addMessage(
+        true,
+        "Libro " + book.id + " anadido al carrito con exito"
+      );
+    }
+  },
+
+  async getBookById(id) {
+    try {
+      const response = await apiClient.books().getDBBook(id);
+      return response.data;
+    } catch (error) {
+      console.log("Error al cargar datos:", error);
+      this.addMessage(false, "Error al buscar el libro");
+    }
+  },
+
+  async editBook(book) {
+    try {
+      const response = await apiClient.books().changeDBBook(book);
+
+      this.addMessage(true, "Libro " + book.id + " editado con exito");
+      const index = this.state.books.findIndex(
+        (book) => book.id === response.data.id
+      );
+
+      if (index !== -1) {
+        this.state.books[index] = response.data;
+      }
+    } catch (error) {
+      console.log("Error al cargar datos:", error);
+    }
   },
 };

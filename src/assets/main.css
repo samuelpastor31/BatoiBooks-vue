@@ -110,6 +110,7 @@ button {
 
 .buttonX {
   color : black;
+  display : block;
   /* sube el boton para estar al nivel del msg  */
   position: relative;
   top: -60px;

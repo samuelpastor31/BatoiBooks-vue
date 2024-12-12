@@ -5,10 +5,11 @@ export default {}
 <template>
           <nav id="menu">
         <ul>
-          <li><a href="#list">Ver Libros</a></li>
-          <li><a href="#form" id="add">Añadir Libro</a></li>
-          <li><a href="#about">Acerca de...</a></li>
-          <li><a href="#messages"></a></li>
+          <router-link to="/">Ver Libros</router-link>
+          <router-link to="/form" id="add">Nuevo Libro</router-link>
+          <router-link to="/cart">Carrito</router-link>
+          <router-link to="/about">Acerca de...</router-link>
+          <!-- <li><a href="#messages"></a></li> -->
         </ul>
       </nav>
 </template>

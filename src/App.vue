@@ -44,12 +44,9 @@ export default {
       <h3>Control de libros</h3>
       <app-menu></app-menu>
     </header>
-
-      <books-list></books-list>
       <app-messages></app-messages>
-      <add-books></add-books>
-      <app-cart></app-cart>
-      <about-view></about-view>
+
+      <router-view></router-view>
 
 </template>
 

@@ -1,8 +1,19 @@
 <script>
 import { store } from '../stores/stores.js';
 
+
 export default {
   name: 'AddBooks',
+  props: {
+    id: {
+      type: Number,
+      required: null
+    },
+    book: {
+      type: Object,
+      required: true
+    }
+  },
   data() {
     return {
       book: {
@@ -14,27 +25,14 @@ export default {
         status: '',
         comments: '',
       },
+      bookSave: {},
       modules: [],
     };
   },
-  computed: {
-    modules() {
-      return store.state.modules;
-    }
-  },
-  methods: {
-    async handleSubmit() {
-
-      // Crear el libro y agregarlo al store
-      const newBook = {
-        ...this.book,
-        userId: 2,
-      };
-      await store.addBook(newBook);
-
-      // Limpiar el formulario
+  watch: {
+    id() {
       this.book = {
-        //id: null,
+        id: null,
         moduleCode: '',
         publisher: '',
         price: null,
@@ -42,18 +40,70 @@ export default {
         status: '',
         comments: '',
       };
-    },
+    }
   },
+  computed: {
+    modules() {
+      return store.state.modules;
+    },
+    esEdicion() {
+      return this.id != null;
+    }
+  },
+  async mounted() {
+    if (this.esEdicion) {
+      const book = await store.getBookById(this.id);
+      if (book) {
+        this.book = { ...this.book, ...book }
+        this.bookSave = { ...this.book, ...book }
+      }
+    }
+  },
+  methods: {
+    async handleSubmit() {
+      if (this.esEdicion) {
+        await store.editBook(this.book);
+        this.$router.push('/');
+      } else {
+
+        // Crear el libro y agregarlo al store
+        const newBook = {
+          ...this.book,
+          userId: 2,
+        };
+        await store.addBook(newBook);
+
+        // Limpiar el formulario
+        this.book = {
+          id: null,
+          moduleCode: '',
+          publisher: '',
+          price: null,
+          pages: null,
+          status: '',
+          comments: '',
+        };
+        this.$router.push('/');
+      }
+
+    },
+    bookReset() {
+      alert("reseted")
+      this.book = { ...this.bookSave };
+    }
+  },
+
 };
 </script>
 
 <template>
   <div id="form">
     <form @submit.prevent="handleSubmit">
-      <h3 id="titleForm">Añadir libro</h3>
-      <div v-if="book.id">
+      <h3 id="titleForm">{{ esEdicion ? 'Editar libro' : 'Añadir libro' }}</h3>
+
+      <div v-if="esEdicion">
         <label for="id">ID:</label>
-        <input type="text" v-model="book.id" disabled />
+        <input type="text" id="id" :value="book.id" disabled />
       </div>
 
       <div>
@@ -96,8 +146,10 @@ export default {
         <textarea id="comments" v-model="book.comments"></textarea>
       </div>
 
-      <button type="submit">Añadir</button>
-      <button type="reset">Reset</button>
+      <button type="submit">{{ esEdicion ? 'Editar' : 'Añadir' }}</button>
+      <button type="button" v-if="esEdicion" v-on:click="this.bookReset()">Reset</button>
+      <button type="reset" v-else>Reset</button>
+
     </form>
   </div>
 </template>

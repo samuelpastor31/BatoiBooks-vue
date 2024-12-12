@@ -1,23 +1,25 @@
-import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
+import { createWebHistory, createRouter } from "vue-router";
+
+import BooksList from "@/components/BooksList.vue";
+import AddBooks from "@/components/AddBooks.vue";
+import AboutView from "../views/AboutView.vue";
+import AppCart from "@/components/AppCart.vue";
+
+const routes = [
+  { path: "/", component: BooksList },
+  { path: "/form", component: AddBooks },
+  { path: "/about", component: AboutView },
+  { path: "/cart", component: AppCart },
+  { path: "/edit/:id", component: AddBooks, props: true },
+];
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
-  routes: [
-    {
-      path: '/',
-      name: 'home',
-      component: HomeView,
-    },
-    {
-      path: '/about',
-      name: 'about',
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import('../views/AboutView.vue'),
-    },
-  ],
+  routes,
 })
+
+// router.afterEach("/edit/:id", "/form") {
+//   console.log('Vengo de ' + from + ' y voy a ' + to);
+// }
 
 export default router
