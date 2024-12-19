@@ -1,105 +1,91 @@
 <script>
-import { store } from '../stores/stores.js';
-
+import { mapState,mapActions } from "pinia";
+import { useDataStore } from "../stores/useDataStore.js";
 
 export default {
-  name: 'AddBooks',
+  name: "AddBooks",
   props: {
     id: {
       type: Number,
-      required: null
+      required: null,
     },
     book: {
       type: Object,
-      required: true
-    }
+      required: true,
+    },
   },
   data() {
     return {
       book: {
-        //id: null,
-        moduleCode: '',
-        publisher: '',
+        moduleCode: "",
+        publisher: "",
         price: null,
         pages: null,
-        status: '',
-        comments: '',
+        status: "",
+        comments: "",
       },
       bookSave: {},
-      modules: [],
     };
   },
   watch: {
     id() {
       this.book = {
-        id: null,
-        moduleCode: '',
-        publisher: '',
+        moduleCode: "",
+        publisher: "",
         price: null,
         pages: null,
-        status: '',
-        comments: '',
+        status: "",
+        comments: "",
       };
-    }
+    },
   },
   computed: {
-    modules() {
-      return store.state.modules;
-    },
+    ...mapState(useDataStore, ['modules','getBookById']),
     esEdicion() {
       return this.id != null;
-    }
+    },
   },
   async mounted() {
     if (this.esEdicion) {
-      const book = await store.getBookById(this.id);
+      const book = await this.getBookById(this.id);
       if (book) {
-        this.book = { ...this.book, ...book }
-        this.bookSave = { ...this.book, ...book }
+        this.book = { ...this.book, ...book };
+        this.bookSave = { ...this.book };
       }
     }
   },
   methods: {
+    ...mapActions(useDataStore, ['addToCart','editBook', 'addBook']),
     async handleSubmit() {
       if (this.esEdicion) {
-        await store.editBook(this.book);
-        this.$router.push('/');
+        await this.editBook(this.book);
+        this.$router.push("/");
       } else {
-
-        // Crear el libro y agregarlo al store
-        const newBook = {
-          ...this.book,
-          userId: 2,
-        };
-        await store.addBook(newBook);
-
-        // Limpiar el formulario
+        const newBook = { ...this.book, userId: 2 };
+        await this.addBook(newBook);
         this.book = {
-          id: null,
-          moduleCode: '',
-          publisher: '',
+          moduleCode: "",
+          publisher: "",
           price: null,
           pages: null,
-          status: '',
-          comments: '',
+          status: "",
+          comments: "",
         };
-        this.$router.push('/');
+        this.$router.push("/");
       }
-
     },
     bookReset() {
-      alert("reseted")
+      alert("reseted");
       this.book = { ...this.bookSave };
-    }
+    },
   },
-
 };
 </script>
 
 <template>
   <div id="form">
     <form @submit.prevent="handleSubmit">
-      <h3 id="titleForm">{{ esEdicion ? 'Editar libro' : 'Añadir libro' }}</h3>
+      <h3 id="titleForm">{{ esEdicion ? "Editar libro" : "Añadir libro" }}</h3>
 
       <div v-if="esEdicion">
         <label for="id">ID:</label>
@@ -146,10 +132,9 @@ export default {
         <textarea id="comments" v-model="book.comments"></textarea>
       </div>
 
-      <button type="submit">{{ esEdicion ? 'Editar' : 'Añadir' }}</button>
-      <button type="button" v-if="esEdicion" v-on:click="this.bookReset()">Reset</button>
+      <button type="submit">{{ esEdicion ? "Editar" : "Añadir" }}</button>
+      <button type="button" v-if="esEdicion" @click="bookReset">Reset</button>
       <button type="reset" v-else>Reset</button>
-
     </form>
   </div>
 </template>

@@ -1,15 +1,15 @@
 <script>
-import { store } from '../stores/stores.js';
+import { mapActions, mapState } from 'pinia';
+import { useDataStore } from '../stores/useDataStore.js';
 
 export default {
     computed: {
-        messages() {
-            return store.state.messages;
-        },
+        ...mapState(useDataStore, ['messages']),
     },
     methods: {
-        deleteMessage(index) {
-            return store.deleteMessage(index);
+        ...mapActions(useDataStore, ['deleteMessage']),
+        deleteMessages(index) {
+            return this.deleteMessage(index);
         }
     }
 }
@@ -20,7 +20,7 @@ export default {
         <div v-html="message"></div>
         <button type="button" class="buttonX"
             style="float: right; background: none; border: none; font-weight: bold; font-size: 16px; cursor: pointer;"
-            v-on:click=deleteMessage(index)>
+            v-on:click=deleteMessages(index)>
             x
         </button>
     </div>

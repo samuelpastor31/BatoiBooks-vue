@@ -1,5 +1,4 @@
 <script>
-import { store } from '../stores/stores.js';
 
 export default {
     props: {

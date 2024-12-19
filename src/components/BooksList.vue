@@ -1,35 +1,25 @@
 <script>
-import { store } from '../stores/stores.js';
+import { useDataStore } from '@/stores/useDataStore';
 import BookItem from './BookItem.vue';
+import { mapState,mapActions } from 'pinia';
 export default {
     name: 'BooksList',
     components: {
         BookItem
     },
     computed: {
-        books() {
-            return store.state.books;
-        },
-        modules() {
-            return store.state.modules;
-        }
+        ...mapState(useDataStore, ['books', 'modules']),
     },
     methods: {
-        getModule(moduleCode) {
-            const module = store.state.modules.find(module => module.code == moduleCode);
-            if (!module) {
-                console.warn(`Módulo no encontrado para el código: ${moduleCode}`);
-            }
-
-            return module;
-        },
-        deleteBook(book) {
+        ...mapActions(useDataStore, ['deleteBook', 'addBookToCart', 'editBook', 'findModule']),
+        deleteBooks(book) {
             if (confirm("¿Desea eliminar el libro con id " + book.id + " y modulo " + book.moduleCode + "?")) {
-                store.deleteBook(book.id);
+                this.deleteBook(book.id);
             }
         },
         addToCart(book) {
-            store.addBookToCart(book);
+            
+            this.addBookToCart(book);
         },
         editBook(book) {
             this.$router.push({ path: '/edit/' + book.id });
@@ -41,7 +31,7 @@ export default {
 
 <template>
     <div id="list">
-        <book-item v-for="book in books" :key="book.id" :book="book" :module="getModule(book.moduleCode)">
+        <book-item v-for="book in books" :key="book.id" :book="book" :module="this.findModule(book.moduleCode)">
 
             <div id="buttons">
                 <button class="addToCartButton" data-id={{book.id}} v-on:click="addToCart(book)">
@@ -50,7 +40,7 @@ export default {
                 <button class="editButton" data-id={{book.id}} v-on:click="editBook(book)">
                     <span class="material-icons">edit</span>
                 </button>
-                <button class="removeButton" data-id={{book.id}} v-on:click="deleteBook(book)">
+                <button class="removeButton" data-id={{book.id}} v-on:click="deleteBooks(book)">
                     <span class="material-icons">delete</span>
                 </button>
             </div>

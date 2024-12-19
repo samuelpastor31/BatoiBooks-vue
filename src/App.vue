@@ -7,7 +7,7 @@ import AddBooks from './components/AddBooks.vue';
 import AppCart from './components/AppCart.vue';
 import AboutView from './views/AboutView.vue';
 import batoiLogo from '/logoBatoi.png';
-import { store } from './stores/stores';
+import { useDataStore } from './stores/useDataStore';
 
 export default {
   components: {
@@ -23,6 +23,7 @@ export default {
   },
   methods:{
     async populate(){
+      const store = useDataStore();
       await Promise.all([
       store.populateModules(),
       store.populateBooks(),
