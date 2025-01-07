@@ -81,7 +81,7 @@ export default {
     ...mapActions(useDataStore, ['addToCart', 'editBook', 'addBook']),
     async handleSubmit(values) {
       if (this.esEdicion) {
-        await this.editBook(values);
+        await this.editBook(this.id,values);
         this.$router.push("/");
       } else {
         const newBook = { ...values, userId: 2 };
@@ -150,9 +150,9 @@ export default {
 
       <div>
         <label>Estado:</label>
-        <Field name="status" type="radio" value="good" /> Bueno
-        <Field name="status" type="radio" value="bad" /> Malo
-        <Field name="status" type="radio" value="new" /> Nuevo
+        <Field name="status" type="radio" value="good" v-model="book.status"/> Bueno
+        <Field name="status" type="radio" value="bad" v-model="book.status"/> Malo
+        <Field name="status" type="radio" value="new" v-model="book.status"/> Nuevo
         <ErrorMessage name="status" />
       </div>
 

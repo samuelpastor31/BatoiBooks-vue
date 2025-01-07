@@ -16,7 +16,7 @@ export default class ApiClient {
       getDBBook: (id) => apiClient.get("/books/" + id),
       addBook: (book) => apiClient.post("/books", book),
       removeDBBook: (id) => apiClient.delete("/books/" + id),
-      changeDBBook: (book) => apiClient.put("/books/" + book.id, book),
+      changeDBBook: (id,book) => apiClient.put("/books/" + id, book),
       checkBookInModuleDBBook: (userId, moduleCode) =>
         apiClient.get("/books?userId=" + userId + "&moduleCode=" + moduleCode),
     };

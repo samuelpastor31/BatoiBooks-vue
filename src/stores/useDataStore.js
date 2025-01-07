@@ -71,10 +71,15 @@ export const useDataStore = defineStore("dataStore", {
     },
 
     async addBook(book) {
+      alert(book.userId);
       try {
+        if(await this.bookInModule(book.userId, book.moduleCode) == false){
         const response = await apiClient.books().addBook(book);
         this.books.push(response.data);
         this.addMessage(true, "Libro creado con éxito");
+        }else {this.addMessage(false, "El usuario ya tiene un libro creado en ese módulo");
+        return;
+      }
       } catch (error) {
         console.error("Error al crear el libro:", error);
         this.addMessage(false, "Error al crear el libro");
@@ -104,18 +109,18 @@ export const useDataStore = defineStore("dataStore", {
       }
     },
 
-    async editBook(book) {
+    async editBook(id,book) {
       try {
-        const response = await apiClient.books().changeDBBook(book);
-        const index = this.books.findIndex((b) => b.id === book.id);
+        const response = await apiClient.books().changeDBBook(id,book);
+        const index = this.books.findIndex((b) => b.id === id);
 
         if (index !== -1) {
           this.books[index] = response.data;
         }
-        this.addMessage(true, `Libro ${book.id} editado con éxito`);
+        this.addMessage(true, `Libro ${id} editado con éxito`);
       } catch (error) {
-        console.error("Error al editar el libro:", error);
-        this.addMessage(false, "Error al editar el libro");
+        console.error("Error al editar el libro :"+error, error);
+        this.addMessage(false, "Error al editar el libro: "+error);
       }
     },
     clearClartDB(){
