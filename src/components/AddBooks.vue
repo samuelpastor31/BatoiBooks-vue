@@ -121,7 +121,7 @@ export default {
 
       <div>
         <label for="id-module">Módulo:</label>
-        <Field as="select" id="id-module" name="moduleCode">
+        <Field as="select" id="id-module" name="moduleCode" v-model="book.moduleCode">
           <option value="">- Selecciona un módulo -</option>
           <option v-for="module in modules" :key="module.code" :value="module.code">
             {{ module.cliteral }}
@@ -132,19 +132,19 @@ export default {
 
       <div>
         <label for="publisher">Editorial:</label>
-        <Field id="publisher" name="publisher" type="text" />
+        <Field id="publisher" name="publisher" type="text" v-model="book.publisher"/>
         <ErrorMessage name="publisher" />
       </div>
 
       <div>
         <label for="price">Precio:</label>
-        <Field id="price" name="price" type="number" min="0" step="0.01" />
+        <Field id="price" name="price" type="number" min="0" step="0.01" v-model="book.price"/>
         <ErrorMessage name="price" />
       </div>
 
       <div>
         <label for="pages">Páginas:</label>
-        <Field id="pages" name="pages" type="number" min="1" />
+        <Field id="pages" name="pages" type="number" min="1" v-model="book.pages"/>
         <ErrorMessage name="pages" />
       </div>
 
@@ -158,7 +158,7 @@ export default {
 
       <div>
         <label for="comments">Comentarios:</label>
-        <Field as="textarea" id="comments" name="comments" />
+        <Field as="textarea" id="comments" name="comments" v-model="book.comments"/>
         <ErrorMessage name="comments" />
       </div>
 
