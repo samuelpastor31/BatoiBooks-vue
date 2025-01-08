@@ -81,7 +81,8 @@ export default {
     ...mapActions(useDataStore, ['addToCart', 'editBook', 'addBook']),
     async handleSubmit(values) {
       if (this.esEdicion) {
-        await this.editBook(this.id,values);
+        const bookEdit = { ...values, userId: 2 };
+        await this.editBook(this.id, bookEdit);
         this.$router.push("/");
       } else {
         const newBook = { ...values, userId: 2 };

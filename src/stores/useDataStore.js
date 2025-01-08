@@ -9,7 +9,7 @@ export const useDataStore = defineStore("dataStore", {
     modules: [],
     users: [],
     messages: [],
-    cart:  JSON.parse(localStorage.getItem('cart')) || [],
+    cart: JSON.parse(localStorage.getItem("cart")) || [],
   }),
 
   getters: {
@@ -17,7 +17,7 @@ export const useDataStore = defineStore("dataStore", {
       return state.books.find((book) => book.id === id);
     },
     findModule: (state) => (moduleCode) => {
-      return state.modules.find((module) => module.code === moduleCode)||{};
+      return state.modules.find((module) => module.code === moduleCode) || {};
     },
   },
 
@@ -70,16 +70,31 @@ export const useDataStore = defineStore("dataStore", {
       }
     },
 
-    async addBook(book) {
-      alert(book.userId);
+    async bookInModuleEdit(userId, moduleCode, id) {
       try {
-        if(await this.bookInModule(book.userId, book.moduleCode) == false){
-        const response = await apiClient.books().addBook(book);
-        this.books.push(response.data);
-        this.addMessage(true, "Libro creado con éxito");
-        }else {this.addMessage(false, "El usuario ya tiene un libro creado en ese módulo");
-        return;
+        const response = await apiClient
+          .books()
+          .checkBookInModuleDBBook(userId, moduleCode);
+    
+        // Filtrar libros que no coincidan con el ID proporcionado
+        const filteredBooks = response.data.filter((book) => book.id !== id);
+        return filteredBooks;
+      } catch (error) {
+        console.error("Error al buscar el libro:", error);
+        this.addMessage(false, "Error al buscar el libro");
       }
+    },
+
+    async addBook(book) {
+      try {
+        if ((await this.bookInModule(book.userId, book.moduleCode)) == false) {
+          const response = await apiClient.books().addBook(book);
+          this.books.push(response.data);
+          this.addMessage(true, "Libro creado con éxito");
+        } else {
+          this.addMessage(false,"El usuario ya tiene un libro creado en ese módulo");
+          return;
+        }
       } catch (error) {
         console.error("Error al crear el libro:", error);
         this.addMessage(false, "Error al crear el libro");
@@ -100,33 +115,42 @@ export const useDataStore = defineStore("dataStore", {
     addBookToCart(book) {
       if (this.cart.includes(book)) {
         this.cart.splice(book, 1);
-        localStorage.setItem('cart', JSON.stringify(this.cart));
+        localStorage.setItem("cart", JSON.stringify(this.cart));
         this.addMessage(false, `Libro ${book.id} quitado del carrito`);
       } else {
         this.cart.push(book);
-        localStorage.setItem('cart', JSON.stringify(this.cart));
+        localStorage.setItem("cart", JSON.stringify(this.cart));
         this.addMessage(true, `Libro ${book.id} añadido al carrito con éxito`);
       }
     },
 
-    async editBook(id,book) {
+    async editBook(id, book) {
       try {
-        const response = await apiClient.books().changeDBBook(id,book);
-        const index = this.books.findIndex((b) => b.id === id);
-
-        if (index !== -1) {
-          this.books[index] = response.data;
+        const existingBooks = await this.bookInModuleEdit(book.userId, book.moduleCode, id);
+    
+        if (existingBooks.length == 0) {
+          const response = await apiClient.books().changeDBBook(id, book);
+          const index = this.books.findIndex((b) => b.id === id);
+    
+          if (index !== -1) {
+            this.books[index] = response.data;
+          }
+          this.addMessage(true, `Libro ${id} editado con éxito`);
+        } else {
+          this.addMessage(false, "No se puede editar, el usuario ya tiene un libro creado en ese módulo");
+          return;
         }
-        this.addMessage(true, `Libro ${id} editado con éxito`);
       } catch (error) {
-        console.error("Error al editar el libro :"+error, error);
-        this.addMessage(false, "Error al editar el libro: "+error);
+        console.error("Error al editar el libro: " + error, error);
+        this.addMessage(false, "Error al editar el libro: " + error);
       }
     },
-    clearClartDB(){
-      this.cart = []
-      localStorage.setItem('cart', JSON.stringify(this.cart));
+    
+
+    clearClartDB() {
+      this.cart = [];
+      localStorage.setItem("cart", JSON.stringify(this.cart));
       this.addMessage(true, "Carrito limpio con exito");
-    }
+    },
   },
 });
